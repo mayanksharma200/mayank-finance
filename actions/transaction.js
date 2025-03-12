@@ -15,7 +15,7 @@ const serializeAmount = (obj) => ({
 });
 
 // Create Transaction
-export async function createTransaction(data) {
+async function createTransaction(data) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -81,7 +81,7 @@ export async function createTransaction(data) {
 }
 
 // ✅ Get a single transaction (ADDED BACK)
-export async function getTransaction(id) {
+ async function getTransaction(id) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -108,7 +108,7 @@ export async function getTransaction(id) {
 }
 
 // Update Transaction
-export async function updateTransaction(id, data) {
+async function updateTransaction(id, data) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -162,7 +162,7 @@ export async function updateTransaction(id, data) {
 }
 
 // Get User Transactions
-export async function getUserTransactions(query = {}) {
+async function getUserTransactions(query = {}) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -183,7 +183,7 @@ export async function getUserTransactions(query = {}) {
 }
 
 // Scan Receipt
-export async function scanReceipt(file) {
+async function scanReceipt(file) {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 

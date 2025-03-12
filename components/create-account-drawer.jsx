@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // ✅ Import Next.js router
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -31,8 +30,6 @@ import { accountSchema } from "@/app/lib/schema";
 
 export function CreateAccountDrawer({ children }) {
   const [open, setOpen] = useState(false);
-  const router = useRouter(); // ✅ Get router instance
-
   const {
     register,
     handleSubmit,
@@ -66,11 +63,8 @@ export function CreateAccountDrawer({ children }) {
       toast.success("Account created successfully");
       reset();
       setOpen(false);
-
-      // ✅ Redirect to /dashboard after account creation
-      router.push("/");
     }
-  }, [newAccount, reset, router]);
+  }, [newAccount, reset]);
 
   useEffect(() => {
     if (error) {
@@ -88,7 +82,10 @@ export function CreateAccountDrawer({ children }) {
         <div className="px-4 pb-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Account Name
               </label>
               <Input
@@ -102,7 +99,10 @@ export function CreateAccountDrawer({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="type" className="text-sm font-medium">
+              <label
+                htmlFor="type"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Account Type
               </label>
               <Select
@@ -123,7 +123,10 @@ export function CreateAccountDrawer({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="balance" className="text-sm font-medium">
+              <label
+                htmlFor="balance"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Initial Balance
               </label>
               <Input

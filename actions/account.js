@@ -164,7 +164,7 @@ export async function updateDefaultAccount(accountId) {
       data: { isDefault: true },
     });
 
-    revalidatePath("/");
+    revalidatePath("/dashboard");
     revalidatePath(`/account/${accountId}`);
 
     return { success: true, data: serializeDecimal(account) };

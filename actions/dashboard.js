@@ -6,24 +6,22 @@ import { request } from "@arcjet/next";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-// ✅ Helper Function - Serialize Transactions Safely
+// Serialize transactions safely
 const serializeTransaction = (obj) => {
   if (!obj) return null;
 
   return {
     ...obj,
-    balance: obj.balance ? obj.balance.toNumber() : 0,
-    amount: obj.amount ? obj.amount.toNumber() : 0,
+    balance: obj.balance ? obj.balance.toNumber() : undefined,
+    amount: obj.amount ? obj.amount.toNumber() : undefined,
   };
 };
 
-// ✅ Get User Accounts - Prevents Crashes if User is Missing
+// ✅ Get User Accounts - Handles "User Not Found" Without Crashing
 export async function getUserAccounts() {
   try {
     const { userId } = await auth();
     if (!userId) return [];
-
-    await db.$connect(); // Ensure DB connection
 
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
@@ -41,8 +39,6 @@ export async function getUserAccounts() {
   } catch (error) {
     console.error("Error fetching accounts:", error);
     return [];
-  } finally {
-    await db.$disconnect(); // Close DB connection
   }
 }
 
@@ -51,8 +47,6 @@ export async function createAccount(data) {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: "Unauthorized" };
-
-    await db.$connect(); // Ensure DB connection
 
     const req = await request();
     const decision = await aj.protect(req, { userId, requested: 1 });
@@ -71,20 +65,17 @@ export async function createAccount(data) {
 
     if (!user) return { success: false, error: "User not found" };
 
-    // ✅ Convert Balance to Float Safely
     const balanceFloat = parseFloat(data.balance);
-    if (isNaN(balanceFloat) || balanceFloat < 0) {
+    if (isNaN(balanceFloat)) {
       return { success: false, error: "Invalid balance amount" };
     }
 
-    // ✅ Check Existing Accounts
     const existingAccounts = await db.account.findMany({
       where: { userId: user.id },
     });
     const shouldBeDefault =
       existingAccounts.length === 0 ? true : data.isDefault;
 
-    // ✅ Update Default Account if Needed
     if (shouldBeDefault) {
       await db.account.updateMany({
         where: { userId: user.id, isDefault: true },
@@ -92,7 +83,6 @@ export async function createAccount(data) {
       });
     }
 
-    // ✅ Create New Account
     const account = await db.account.create({
       data: {
         ...data,
@@ -107,8 +97,6 @@ export async function createAccount(data) {
   } catch (error) {
     console.error("Error creating account:", error);
     return { success: false, error: "Failed to create account" };
-  } finally {
-    await db.$disconnect(); // Close DB connection
   }
 }
 
@@ -118,15 +106,13 @@ export async function getDashboardData() {
     const { userId } = await auth();
     if (!userId) return [];
 
-    await db.$connect(); // Ensure DB connection
-
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
     });
 
     if (!user) return [];
 
-    // ✅ Fetch Transactions
+    // Fetch transactions
     const transactions = await db.transaction.findMany({
       where: { userId: user.id },
       orderBy: { date: "desc" },
@@ -138,7 +124,5 @@ export async function getDashboardData() {
   } catch (error) {
     console.error("Error fetching transactions:", error);
     return [];
-  } finally {
-    await db.$disconnect(); // Close DB connection
   }
 }

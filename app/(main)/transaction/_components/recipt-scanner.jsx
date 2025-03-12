@@ -16,14 +16,27 @@ export function ReceiptScanner({ onScanComplete }) {
     data: scannedData,
   } = useFetch(scanReceipt);
 
-  const handleReceiptScan = async (file) => {
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size should be less than 5MB");
-      return;
-    }
+const handleReceiptScan = async (file) => {
+  if (!file) {
+    toast.error("No file detected");
+    return;
+  }
 
+  console.log("File details:", file); // Debugging
+
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error("File size should be less than 5MB");
+    return;
+  }
+
+  try {
     await scanReceiptFn(file);
-  };
+  } catch (error) {
+    console.error("Scan failed:", error);
+    toast.error("Receipt scan failed. Try again.");
+  }
+};
+
 
   useEffect(() => {
     if (scannedData && !scanReceiptLoading) {

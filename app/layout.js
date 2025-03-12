@@ -25,7 +25,8 @@ export default function RootLayout({ children }) {
 
           <footer className="bg-blue-50 py-12">
             <div className="container mx-auto px-4 text-center text-gray-600">
-              <p>Made by Mayank Sharma</p>
+              <p className="gradient-title">Made by Mayank Sharma</p>
+              <p>vashistmayankk@gmail.com</p>
             </div>
           </footer>
         </body>

@@ -68,7 +68,7 @@ export function CreateAccountDrawer({ children }) {
       setOpen(false);
 
       // ✅ Redirect to /dashboard after account creation
-      router.push("/dashboard");
+      router.push("/");
     }
   }, [newAccount, reset, router]);
 

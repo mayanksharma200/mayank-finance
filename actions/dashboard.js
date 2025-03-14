@@ -83,6 +83,7 @@ export async function createAccount(data) {
       });
     }
 
+    // Create the account and wait for it to be fully created
     const account = await db.account.create({
       data: {
         ...data,
@@ -92,8 +93,20 @@ export async function createAccount(data) {
       },
     });
 
-    await revalidatePath("/dashboard");
-    return { success: true, data: serializeTransaction(account) };
+    // Fetch the newly created account to ensure it's available
+    const fetchedAccount = await db.account.findUnique({
+      where: { id: account.id },
+    });
+
+    if (!fetchedAccount) {
+      throw new Error("Failed to fetch the newly created account");
+    }
+
+    // Revalidate the path (no need to await since it's synchronous)
+    revalidatePath("/dashboard");
+
+    // Return the fetched account data
+    return { success: true, data: serializeTransaction(fetchedAccount) };
   } catch (error) {
     console.error("Error creating account:", error);
     return { success: false, error: "Failed to create account" };

@@ -103,7 +103,7 @@ export async function createAccount(data) {
     }
 
     // Revalidate the path (no need to await since it's synchronous)
-    revalidatePath("/dashboard");
+    // revalidatePath("/dashboard");
 
     // Return the fetched account data
     return { success: true, data: serializeTransaction(fetchedAccount) };

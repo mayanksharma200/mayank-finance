@@ -92,7 +92,7 @@ export async function createAccount(data) {
       },
     });
 
-    revalidatePath("/dashboard");
+    await revalidatePath("/dashboard");
     return { success: true, data: serializeTransaction(account) };
   } catch (error) {
     console.error("Error creating account:", error);

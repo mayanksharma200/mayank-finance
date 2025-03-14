@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import useFetch from "@/hooks/use-fetch";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,9 +27,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { createAccount } from "@/actions/dashboard";
 import { accountSchema } from "@/app/lib/schema";
+import useFetch from "@/hooks/use-fetch";
 
 export function CreateAccountDrawer({ children }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter(); // Initialize router
   const {
     register,
     handleSubmit,
@@ -47,30 +49,21 @@ export function CreateAccountDrawer({ children }) {
     },
   });
 
-  const {
-    loading: createAccountLoading,
-    fn: createAccountFn,
-    error,
-    data: newAccount,
-  } = useFetch(createAccount);
+  const { loading: createAccountLoading, fn: createAccountFn } =
+    useFetch(createAccount);
 
   const onSubmit = async (data) => {
-    await createAccountFn(data);
-  };
-
-  useEffect(() => {
-    if (newAccount) {
+    const result = await createAccountFn(data);
+    if (result?.success) {
       toast.success("Account created successfully");
       reset();
       setOpen(false);
+      router.push("/dashboard"); // Use router to redirect
+      router.refresh(); // Force a full page reload
+    } else {
+      toast.error(result?.error || "Failed to create account");
     }
-  }, [newAccount, reset]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message || "Failed to create account");
-    }
-  }, [error]);
+  };
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>

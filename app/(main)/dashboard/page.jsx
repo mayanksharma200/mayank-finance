@@ -6,21 +6,16 @@ import { AccountCard } from "./_components/account-card";
 import { CreateAccountDrawer } from "@/components/create-account-drawer";
 import { BudgetProgress } from "./_components/budget-progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { AwardIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { DashboardOverview } from "./_components/transaction-overview";
 
 export default async function DashboardPage() {
-
-  const testAccounts = await getUserAccounts();
-  console.log(testAccounts);
-
   const [accounts, transactions] = await Promise.all([
     getUserAccounts(),
     getDashboardData(),
   ]);
 
-
-  const defaultAccount = testAccounts?.find((account) => account.isDefault);
+  const defaultAccount = accounts?.find((account) => account.isDefault);
 
   // Get budget for default account
   let budgetData = null;
@@ -38,7 +33,7 @@ export default async function DashboardPage() {
 
       {/* Dashboard Overview */}
       <DashboardOverview
-        accounts={testAccounts}
+        accounts={accounts}
         transactions={transactions || []}
       />
 
@@ -52,8 +47,8 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         </CreateAccountDrawer>
-        {testAccounts.length > 0 &&
-          testAccounts?.map((account) => (
+        {accounts.length > 0 &&
+          accounts?.map((account) => (
             <AccountCard key={account.id} account={account} />
           ))}
       </div>

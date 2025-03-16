@@ -30,6 +30,7 @@ const aj = arcjet({
 
 // Create base Clerk middleware
 const clerk = clerkMiddleware(async (auth, req) => {
+  console.log("Request received:", req.url);
   const { userId } = await auth();
 
   if (!userId && isProtectedRoute(req)) {

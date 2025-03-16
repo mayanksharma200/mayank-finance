@@ -16,8 +16,14 @@ import Link from "next/link";
 import { updateDefaultAccount } from "@/actions/account";
 import { toast } from "sonner";
 
-export function AccountCard({ account }) {
-  const { name, type, balance, id, isDefault } = account;
+export function AccountCard( { account = {} }) {
+  const {
+    name = "dummy",
+    type = "SAVINGS",
+    balance = 177,
+    id = "61e220cc-930b-4801-b2dd-34d3eee08e66",
+    isDefault = true,
+  } = account;
 
   const {
     loading: updateDefaultLoading,

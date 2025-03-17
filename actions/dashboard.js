@@ -35,6 +35,7 @@ export async function getUserAccounts() {
       include: { _count: { select: { transactions: true } } },
     });
 
+    console.time("api call time");
     return Array.isArray(accounts) ? accounts.map(serializeTransaction) : [];
   } catch (error) {
     console.error("Error fetching accounts:", error);
